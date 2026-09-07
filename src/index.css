@@ -1,0 +1,66 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Great+Vibes&family=Inter:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-script: "Great Vibes", cursive;
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  
+  --color-gold-50: #fefcf0;
+  --color-gold-100: #fcf6d6;
+  --color-gold-200: #f7e8a3;
+  --color-gold-300: #f2d56e;
+  --color-gold-400: #ecc03f;
+  --color-gold-500: #d4a31d;
+  --color-gold-600: #af8114;
+  --color-gold-700: #8c6310;
+  --color-gold-800: #6d4b10;
+  --color-gold-900: #543a10;
+
+  --color-emerald-50: #f4fbf7;
+  --color-emerald-900: #022c22;
+  --color-emerald-950: #011c16;
+}
+
+/* Base styling and elegant custom styles */
+body {
+  font-family: var(--font-sans);
+  background-color: #faf9f6; /* Beautiful warm white/alabaster */
+  color: #1a2d26; /* Very dark forest green/black for rich contrast */
+}
+
+/* Beautiful custom border and ornament shapes */
+.gold-gradient-text {
+  background: linear-gradient(135deg, #af8114 0%, #ecc03f 50%, #af8114 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gold-gradient-bg {
+  background: linear-gradient(135deg, #af8114 0%, #ecc03f 50%, #af8114 100%);
+}
+
+.gold-gradient-border {
+  border-image: linear-gradient(135deg, #af8114, #ecc03f, #af8114) 1;
+}
+
+.floral-pattern {
+  background-image: radial-gradient(rgba(175, 129, 20, 0.08) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Elegant scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f4fbf7;
+}
+::-webkit-scrollbar-thumb {
+  background: #af8114;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #8c6310;
+}
+
