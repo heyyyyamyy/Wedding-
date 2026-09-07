@@ -12,6 +12,7 @@ export interface CountdownTime {
 }
 
 export interface RSVPInfo {
+  id?: string;
   name: string;
   email?: string;
   phone?: string;
@@ -19,6 +20,15 @@ export interface RSVPInfo {
   guestsCount: number;
   message?: string;
   submittedAt?: string;
+}
+
+export interface BlessingItem {
+  id: string;
+  sender: string;
+  city?: string;
+  message: string;
+  likes: number;
+  createdAt: string;
 }
 
 export interface EventDetail {

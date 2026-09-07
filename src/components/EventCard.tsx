@@ -27,8 +27,10 @@ export default function EventCard() {
     }
   ];
 
+  const VENUE_MAP_URL = 'https://share.google/251VEzEHu6tIjQUPY';
+
   const handleOpenMap = () => {
-    window.open('https://maps.google.com/?q=Sibbal+Green+VIP+Road+Raipur', '_blank');
+    window.open(VENUE_MAP_URL, '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -114,14 +116,16 @@ export default function EventCard() {
 
             {/* Bottom Button Panel */}
             <div className="p-6 bg-gold-50/40 border-t border-gold-100/60 rounded-b-3xl">
-              <button
-                onClick={handleOpenMap}
+              <a
+                href={VENUE_MAP_URL}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl border border-gold-300 bg-white hover:bg-gold-500 hover:text-white text-gold-700 font-sans text-xs uppercase tracking-widest font-semibold shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer"
               >
                 <MapPin className="w-4 h-4" />
                 Navigate to Venue
                 <ExternalLink className="w-3.5 h-3.5 opacity-60" />
-              </button>
+              </a>
             </div>
           </motion.div>
         ))}

@@ -1,0 +1,49 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isValidString(val, minLen, maxLen) {
+      return val is string && val.size() >= minLen && val.size() <= maxLen;
+    }
+
+    // RSVPs collection
+    match /rsvps/{rsvpId} {
+      // Allow reading for the live guest sheet viewer
+      allow read: if true;
+
+      // Allow guest submission with strict validation
+      allow create: if request.resource.data.name is string 
+                    && isValidString(request.resource.data.name, 1, 120)
+                    && request.resource.data.attending in ['yes', 'no']
+                    && request.resource.data.guestsCount is number
+                    && request.resource.data.guestsCount >= 1
+                    && request.resource.data.guestsCount <= 20
+                    && (request.resource.data.message == null || request.resource.data.message is string);
+
+      // RSVPs cannot be deleted or overwritten arbitrarily
+      allow update, delete: if false;
+    }
+
+    // Blessings & Duas collection
+    match /blessings/{blessingId} {
+      // Allow public viewing of prayers and Duas
+      allow read: if true;
+
+      // Allow any guest to submit a blessing
+      allow create: if request.resource.data.sender is string
+                    && isValidString(request.resource.data.sender, 1, 120)
+                    && request.resource.data.message is string
+                    && isValidString(request.resource.data.message, 1, 1000)
+                    && request.resource.data.likes is number
+                    && request.resource.data.likes >= 0;
+
+      // Allow incrementing/updating likes
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes'])
+                    && request.resource.data.likes is number
+                    && request.resource.data.likes >= 0;
+
+      allow delete: if false;
+    }
+  }
+}

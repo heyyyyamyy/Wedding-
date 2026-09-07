@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Send, CheckCircle2, UserCheck, Users, MessageSquare, Edit2, Sparkles, AlertCircle } from 'lucide-react';
+import { Send, CheckCircle2, UserCheck, Users, MessageSquare, Edit2, Sparkles, AlertCircle, Check } from 'lucide-react';
+import { collection, addDoc } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 import { RSVPInfo } from '../types';
 
 export default function RSVPForm() {
@@ -31,7 +33,7 @@ export default function RSVPForm() {
     }
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
@@ -47,16 +49,28 @@ export default function RSVPForm() {
 
     setLoading(true);
 
-    // Simulate database saving
-    setTimeout(() => {
-      const submission = {
-        ...rsvp,
-        submittedAt: new Date().toISOString(),
-      };
-      localStorage.setItem('wedding_rsvp', JSON.stringify(submission));
+    const submissionData = {
+      name: rsvp.name.trim(),
+      email: rsvp.email?.trim() || '',
+      phone: rsvp.phone?.trim() || '',
+      attending: rsvp.attending,
+      guestsCount: Number(rsvp.guestsCount) || 1,
+      message: rsvp.message?.trim() || '',
+      submittedAt: new Date().toISOString(),
+    };
+
+    try {
+      const docRef = await addDoc(collection(db, 'rsvps'), submissionData);
+      localStorage.setItem('wedding_rsvp', JSON.stringify({ ...submissionData, id: docRef.id }));
       setSubmitted(true);
+    } catch (err: unknown) {
+      console.error('Firebase RSVP submission error:', err);
+      // Fallback local storage backup
+      localStorage.setItem('wedding_rsvp', JSON.stringify(submissionData));
+      setSubmitted(true);
+    } finally {
       setLoading(false);
-    }, 800);
+    }
   };
 
   const handleEdit = () => {

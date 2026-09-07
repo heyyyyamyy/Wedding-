@@ -3,47 +3,51 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Heart, Sparkles, Music, Music2, Share2, Check, Copy, MapPin, Calendar, Compass, Phone } from 'lucide-react';
+import { Heart, Sparkles, Share2, Check, MapPin, Calendar, ExternalLink } from 'lucide-react';
 import Countdown from './components/Countdown';
 import EventCard from './components/EventCard';
 import RSVPForm from './components/RSVPForm';
+import AudioPlayer from './components/AudioPlayer';
+import AddToCalendar from './components/AddToCalendar';
+import TimelineSchedule from './components/TimelineSchedule';
+import DressCodeGuide from './components/DressCodeGuide';
+import VenueGuide from './components/VenueGuide';
+import GuestBlessings from './components/GuestBlessings';
+import PetalsEffect from './components/PetalsEffect';
+import WhatsAppInviteShare from './components/WhatsAppInviteShare';
+import DataSheetViewer from './components/DataSheetViewer';
 
 export default function App() {
-  const [isPlaying, setIsPlaying] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [petalsEnabled, setPetalsEnabled] = useState(true);
+  const [showSheet, setShowSheet] = useState(false);
 
   // Auto-set target wedding date: 18 October 2026, 1:00 PM (13:00)
   const weddingDate = '2026-10-18T13:00:00';
 
+  // Ensure website opens directly on the wedding card without opening any sheets or modals
   useEffect(() => {
-    // Create soft, relaxing acoustic/traditional background music track
-    audioRef.current = new Audio('https://assets.mixkit.co/music/preview/mixkit-relaxing-in-nature-244.mp3');
-    audioRef.current.loop = true;
-    audioRef.current.volume = 0.45;
-
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-      }
-    };
+    // If the browser loaded with #sheet in the URL, remove the hash so it never auto-opens
+    if (window.location.hash === '#sheet') {
+      try {
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+      } catch {}
+    }
   }, []);
 
-  const toggleMusic = () => {
-    if (!audioRef.current) return;
-    
-    if (isPlaying) {
-      audioRef.current.pause();
-    } else {
-      audioRef.current.play().catch(e => console.log('Autoplay blocked', e));
+  const closeSheetView = () => {
+    setShowSheet(false);
+    if (window.location.hash === '#sheet') {
+      try {
+        history.replaceState(null, '', window.location.pathname);
+      } catch {}
     }
-    setIsPlaying(!isPlaying);
   };
 
   const copyInvitationLink = () => {
-    const url = window.location.href;
+    const url = `${window.location.origin}${window.location.pathname}`;
     navigator.clipboard.writeText(url);
     setCopiedLink(true);
     setTimeout(() => setCopiedLink(false), 2000);
@@ -56,38 +60,36 @@ export default function App() {
       <div className="absolute top-0 left-0 right-0 h-[400px] bg-gradient-to-b from-[#FAF4E6]/80 via-[#FAF9F6]/40 to-transparent pointer-events-none z-0" />
       <div className="absolute bottom-0 left-0 right-0 h-[300px] bg-gradient-to-t from-[#F4EFE0]/50 to-transparent pointer-events-none z-0" />
 
-      {/* FLOATING AUDIO CONTROLLER */}
-      <div className="fixed top-4 right-4 z-50 flex items-center gap-2">
-        <motion.button
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          onClick={toggleMusic}
-          className={`p-3.5 rounded-full border shadow-lg cursor-pointer transition-all duration-300 flex items-center justify-center relative group ${
-            isPlaying 
-              ? 'bg-emerald-900 border-gold-400 text-gold-300' 
-              : 'bg-white border-gold-200 hover:border-gold-400 text-emerald-800'
-          }`}
-          title={isPlaying ? "Mute Music" : "Play Wedding Ambient Music"}
-        >
-          {isPlaying ? (
-            <>
-              <Music2 className="w-5 h-5 animate-bounce" />
-              {/* Music pulse waves */}
-              <span className="absolute inline-flex h-full w-full rounded-full a-ping bg-gold-400/20 opacity-75 animate-ping -z-10" />
-            </>
-          ) : (
-            <Music className="w-5 h-5 text-gold-600" />
-          )}
-        </motion.button>
-      </div>
+      {/* ROMANTIC FLOATING ROSE & GOLD PETALS CELEBRATION EFFECT */}
+      <PetalsEffect enabled={petalsEnabled} />
 
-      {/* FLOATING QUICK SHARE LINK FOR MOBILE / WHATSAPP */}
-      <div className="fixed bottom-4 right-4 z-50">
+      {/* BACKGROUND WEDDING MUSIC PLAYER */}
+      <AudioPlayer />
+
+      {/* FLOATING ACTION TOOLBAR (Bottom-Right) */}
+      <div className="fixed bottom-4 right-4 z-50 flex items-center gap-2">
+        {/* Toggle Rose Petals */}
+        <button
+          onClick={() => setPetalsEnabled(!petalsEnabled)}
+          className={`h-11 px-3.5 rounded-full border shadow-md cursor-pointer transition-all duration-300 flex items-center gap-1.5 text-xs font-serif ${
+            petalsEnabled
+              ? 'bg-rose-50/95 border-rose-300 text-rose-800 hover:bg-rose-100'
+              : 'bg-white/95 border-gold-200 text-gray-500 hover:text-emerald-950'
+          }`}
+          title={petalsEnabled ? 'Pause Petal Rain' : 'Enable Petal Rain'}
+        >
+          <span className="text-sm">🌸</span>
+          <span className="hidden sm:inline font-sans text-[11px] font-medium">
+            {petalsEnabled ? 'Petals On' : 'Petals Off'}
+          </span>
+        </button>
+
+        {/* Copy Link / Quick Share */}
         <motion.button
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           onClick={copyInvitationLink}
-          className="p-3.5 bg-white border border-gold-300 rounded-full shadow-lg hover:shadow-xl hover:border-gold-500 text-gold-700 cursor-pointer transition-all duration-300 flex items-center justify-center relative group"
+          className="h-11 w-11 bg-white border border-gold-300 rounded-full shadow-lg hover:shadow-xl hover:border-gold-500 text-gold-700 cursor-pointer transition-all duration-300 flex items-center justify-center relative group"
           title="Share Invitation Link"
         >
           <AnimatePresence mode="wait">
@@ -100,13 +102,13 @@ export default function App() {
                 className="flex items-center gap-1.5"
               >
                 <Check className="w-5 h-5 text-emerald-600" />
-                <span className="absolute right-12 bg-emerald-900 text-white text-[10px] font-sans font-bold tracking-wider px-2.5 py-1 rounded-md shadow-md pointer-events-none uppercase">
-                  Copied!
+                <span className="absolute right-12 bg-emerald-900 text-white text-[10px] font-sans font-bold tracking-wider px-2.5 py-1 rounded-md shadow-md pointer-events-none uppercase whitespace-nowrap">
+                  Link Copied!
                 </span>
               </motion.div>
             ) : (
               <motion.div key="share" className="flex items-center">
-                <Share2 className="w-5 h-5" />
+                <Share2 className="w-4 h-4" />
               </motion.div>
             )}
           </AnimatePresence>
@@ -124,7 +126,7 @@ export default function App() {
             transition={{ duration: 1.2 }}
             className="mb-4"
           >
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-gold-50 border border-gold-200/60 rounded-full text-xs font-sans font-semibold tracking-widest text-gold-600 uppercase">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-gold-50 border border-gold-200/60 rounded-full text-xs font-sans font-semibold tracking-widest text-gold-600 uppercase shadow-2xs">
               <Sparkles className="w-3.5 h-3.5 text-gold-500 fill-gold-300" />
               Bismillah-ir-Rahman-ir-Rahim
             </div>
@@ -151,7 +153,7 @@ export default function App() {
                 We invite you to share the bliss of our celebrations and witness the sacred union of
               </p>
 
-              {/* Groom & Bride Names */}
+              {/* Groom & Bride Names - Saima Fatima on top */}
               <div className="py-6 flex flex-col items-center">
                 <motion.h1 
                   initial={{ opacity: 0, y: 10 }}
@@ -159,7 +161,7 @@ export default function App() {
                   transition={{ delay: 0.5, duration: 1 }}
                   className="font-script text-5xl sm:text-6xl md:text-7xl gold-gradient-text leading-tight text-center"
                 >
-                  Sohail Rawani
+                  Saima Fatima
                 </motion.h1>
                 <div className="my-1 flex items-center justify-center gap-4 w-full">
                   <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-gold-400" />
@@ -172,7 +174,7 @@ export default function App() {
                   transition={{ delay: 0.7, duration: 1 }}
                   className="font-script text-5xl sm:text-6xl md:text-7xl gold-gradient-text leading-tight text-center"
                 >
-                  Saima Fatima
+                  Sohail Rawani
                 </motion.h1>
               </div>
 
@@ -183,16 +185,31 @@ export default function App() {
                   <span className="font-serif text-sm sm:text-base font-semibold">Sunday, 18 October 2026</span>
                 </div>
                 <div className="h-[1px] w-full bg-gold-200/40" />
-                <div className="flex items-center justify-center gap-2 text-emerald-900/80">
-                  <MapPin className="w-4 h-4 text-gold-500" />
-                  <span className="font-sans text-xs tracking-wide uppercase font-semibold">Sibbal Green, VIP Road, Raipur</span>
-                </div>
+                <a
+                  href="https://share.google/251VEzEHu6tIjQUPY"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 text-emerald-900/85 hover:text-gold-700 transition-colors group cursor-pointer"
+                  title="Open location on Google Maps"
+                >
+                  <MapPin className="w-4 h-4 text-gold-500 group-hover:scale-110 transition-transform" />
+                  <span className="font-sans text-xs tracking-wide uppercase font-semibold underline underline-offset-4 decoration-gold-300 group-hover:decoration-gold-500">
+                    Sibbal Green, VIP Road, Raipur
+                  </span>
+                  <ExternalLink className="w-3 h-3 text-gold-500/70" />
+                </a>
               </div>
 
               {/* Custom Traditional Welcome Line */}
               <p className="text-xs text-emerald-900/60 tracking-widest uppercase mt-4">
                 Nikah: 1:00 PM • Reception: 8:00 PM
               </p>
+
+              {/* ACTION PILLS: Add to Calendar & WhatsApp Share */}
+              <div className="flex flex-wrap items-center justify-center gap-3 mt-4 pt-4 border-t border-gold-100/60 w-full max-w-md">
+                <AddToCalendar />
+                <WhatsAppInviteShare />
+              </div>
             </div>
           </motion.div>
         </section>
@@ -202,7 +219,7 @@ export default function App() {
           <Countdown targetDate={weddingDate} />
         </section>
 
-        {/* SCHEDULE / EVENT DETAILS CARD */}
+        {/* CEREMONIAL EVENT DETAILS */}
         <section className="w-full">
           <div className="text-center mb-4">
             <span className="text-[10px] tracking-[0.25em] font-sans uppercase font-bold text-gold-600">
@@ -216,9 +233,29 @@ export default function App() {
           <EventCard />
         </section>
 
+        {/* DAY-OF ITINERARY & SEQUENCE */}
+        <section className="w-full">
+          <TimelineSchedule />
+        </section>
+
+        {/* ATTIRE STYLE GUIDE & COLOR PALETTE */}
+        <section className="w-full">
+          <DressCodeGuide />
+        </section>
+
+        {/* LOCATION & TRAVEL ACCOMMODATION GUIDE */}
+        <section className="w-full">
+          <VenueGuide />
+        </section>
+
         {/* RSVP FORM SECTION */}
         <section className="w-full">
           <RSVPForm />
+        </section>
+
+        {/* BLESSINGS & DUAS GUESTBOOK WALL */}
+        <section className="w-full">
+          <GuestBlessings />
         </section>
 
       </main>
@@ -240,15 +277,23 @@ export default function App() {
           We look forward to celebrating with you.
         </p>
 
-        <div className="mt-6 flex flex-col items-center gap-1">
+        <div className="mt-4 flex flex-col items-center gap-1">
           <p className="text-xs font-sans font-semibold text-emerald-900/70 tracking-widest uppercase">
             Startup solution
           </p>
           <p className="text-[10px] font-mono text-emerald-900/40">
-            © 2026 Sohail Rawani & Saima Fatima Wedding
+            © 2026 Saima Fatima & Sohail Rawani Wedding
           </p>
         </div>
       </footer>
+
+      {/* SEPARATE FRONT END SHEET VIEWER MODAL / ROUTE */}
+      <AnimatePresence>
+        {showSheet && (
+          <DataSheetViewer onClose={closeSheetView} />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
+

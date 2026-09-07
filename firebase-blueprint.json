@@ -1,0 +1,42 @@
+{
+  "entities": {
+    "RSVP": {
+      "title": "RSVP",
+      "description": "Wedding guest RSVP response",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Full name of the guest" },
+        "email": { "type": "string", "description": "Guest email address" },
+        "phone": { "type": "string", "description": "Guest phone contact" },
+        "attending": { "type": "string", "description": "Whether guest is attending ('yes' or 'no')" },
+        "guestsCount": { "type": "number", "description": "Number of guests attending" },
+        "message": { "type": "string", "description": "Special message or blessing from guest" },
+        "submittedAt": { "type": "string", "description": "ISO timestamp of submission" }
+      },
+      "required": ["name", "attending", "guestsCount", "submittedAt"]
+    },
+    "Blessing": {
+      "title": "Blessing",
+      "description": "Guest prayer and congratulatory message",
+      "type": "object",
+      "properties": {
+        "sender": { "type": "string", "description": "Sender name" },
+        "city": { "type": "string", "description": "City or relationship" },
+        "message": { "type": "string", "description": "Dua or congratulatory message" },
+        "likes": { "type": "number", "description": "Count of hearts / Ameen received" },
+        "createdAt": { "type": "string", "description": "ISO timestamp of submission" }
+      },
+      "required": ["sender", "message", "likes", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/rsvps/{rsvpId}": {
+      "schema": "RSVP",
+      "description": "Collection of guest wedding RSVP submissions"
+    },
+    "/blessings/{blessingId}": {
+      "schema": "Blessing",
+      "description": "Collection of guest blessings and Duas"
+    }
+  }
+}
