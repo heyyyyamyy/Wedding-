@@ -75,7 +75,7 @@ END:VEVENT
 
     const icsString = `BEGIN:VCALENDAR
 VERSION:2.0
-PRODID:-//Startup solution//Saima & Sohail Wedding//EN
+PRODID:-//Saima & Sohail Wedding//EN
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
 ${eventsContent}END:VCALENDAR`;

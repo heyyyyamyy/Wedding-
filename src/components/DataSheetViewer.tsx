@@ -83,7 +83,7 @@ export default function DataSheetViewer({ onClose }: DataSheetViewerProps) {
           message: doc.data().message || '',
           likes: typeof doc.data().likes === 'number' ? doc.data().likes : 0,
           createdAt: doc.data().createdAt || '',
-        }));
+        })).filter(item => !item.sender.includes('Amaan - nayab ka papa'));
         setBlessings(list);
         setLoadingBlessings(false);
       },
@@ -490,9 +490,6 @@ export default function DataSheetViewer({ onClose }: DataSheetViewerProps) {
         <div className="bg-white border-t border-gray-200 px-5 py-2.5 flex items-center justify-between text-[11px] text-gray-500 font-sans">
           <span>
             Displaying {activeTab === 'rsvps' ? filteredRsvps.length : filteredBlessings.length} records • Live cloud database
-          </span>
-          <span className="text-gold-700 font-semibold">
-            Startup solution
           </span>
         </div>
       </motion.div>

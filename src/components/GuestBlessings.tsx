@@ -51,7 +51,7 @@ export default function GuestBlessings() {
           message: d.data().message || '',
           likes: typeof d.data().likes === 'number' ? d.data().likes : 0,
           createdAt: d.data().createdAt || new Date().toISOString(),
-        }));
+        })).filter(item => !item.sender.includes('Amaan - nayab ka papa'));
         setBlessings(items);
         setLoading(false);
       },

@@ -1,6 +1,6 @@
 {
-  "name": "Startup solution",
-  "description": "Elegant wedding invitation for Saima Fatima and Sohail Rawani's Nikah Ceremony and Reception at Sibbal Green, Raipur. Powered by Startup solution.",
+  "name": "Saima & Sohail Wedding",
+  "description": "Elegant wedding invitation for Saima Fatima and Sohail Rawani's Nikah Ceremony and Reception at Sibbal Green, Raipur.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

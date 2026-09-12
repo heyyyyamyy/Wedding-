@@ -18,11 +18,13 @@ import GuestBlessings from './components/GuestBlessings';
 import PetalsEffect from './components/PetalsEffect';
 import WhatsAppInviteShare from './components/WhatsAppInviteShare';
 import DataSheetViewer from './components/DataSheetViewer';
+import WelcomeCover from './components/WelcomeCover';
 
 export default function App() {
   const [copiedLink, setCopiedLink] = useState(false);
   const [petalsEnabled, setPetalsEnabled] = useState(true);
   const [showSheet, setShowSheet] = useState(false);
+  const [isCoverOpened, setIsCoverOpened] = useState(false);
 
   // Auto-set target wedding date: 18 October 2026, 1:00 PM (13:00)
   const weddingDate = '2026-10-18T13:00:00';
@@ -57,7 +59,11 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF9F6] text-emerald-950 flex flex-col items-center justify-between relative overflow-hidden floral-pattern selection:bg-gold-200 selection:text-emerald-950">
+    <>
+      <WelcomeCover onOpen={() => setIsCoverOpened(true)} />
+
+      {/* Only show the rest of the site once the cover is opened to save rendering resources initially and prevent audio issues */}
+      <div className={`min-h-screen bg-[#FAF9F6] text-emerald-950 flex flex-col items-center justify-between relative overflow-hidden floral-pattern selection:bg-gold-200 selection:text-emerald-950 ${!isCoverOpened ? 'hidden' : ''}`}>
       
       {/* Decorative Ornate Background Overlays */}
       <div className="absolute top-0 left-0 right-0 h-[400px] bg-gradient-to-b from-[#FAF4E6]/80 via-[#FAF9F6]/40 to-transparent pointer-events-none z-0" />
@@ -284,14 +290,11 @@ export default function App() {
           <button
             type="button"
             onClick={() => setShowSheet(true)}
-            className="text-xs font-sans font-semibold text-emerald-900/70 tracking-widest uppercase hover:text-gold-700 cursor-pointer transition-colors"
+            className="text-[10px] font-mono text-emerald-900/40 hover:text-gold-700 cursor-pointer transition-colors"
             title="Organizer Guest Sheet View"
           >
-            Startup solution
-          </button>
-          <p className="text-[10px] font-mono text-emerald-900/40">
             © 2026 Saima Fatima & Sohail Rawani Wedding
-          </p>
+          </button>
         </div>
       </footer>
 
@@ -302,6 +305,7 @@ export default function App() {
         )}
       </AnimatePresence>
     </div>
+    </>
   );
 }
 
