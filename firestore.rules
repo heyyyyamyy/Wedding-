@@ -45,5 +45,14 @@ service cloud.firestore {
 
       allow delete: if false;
     }
+
+    // Wedding Gallery collection
+    match /gallery/{photoId} {
+      allow read: if true;
+      allow create: if request.resource.data.url is string
+                    && request.resource.data.eventCategory is string
+                    && request.resource.data.uploadedBy is string;
+      allow update, delete: if false;
+    }
   }
 }

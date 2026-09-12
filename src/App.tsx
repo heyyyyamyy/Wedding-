@@ -5,7 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Heart, Sparkles, Share2, Check, MapPin, Calendar, ExternalLink } from 'lucide-react';
+import { Heart, Sparkles, Share2, Check, MapPin, Calendar, ExternalLink, Camera } from 'lucide-react';
 import Countdown from './components/Countdown';
 import EventCard from './components/EventCard';
 import RSVPForm from './components/RSVPForm';
@@ -19,12 +19,14 @@ import PetalsEffect from './components/PetalsEffect';
 import WhatsAppInviteShare from './components/WhatsAppInviteShare';
 import DataSheetViewer from './components/DataSheetViewer';
 import WelcomeCover from './components/WelcomeCover';
+import WeddingGallery from './components/WeddingGallery';
 
 export default function App() {
   const [copiedLink, setCopiedLink] = useState(false);
   const [petalsEnabled, setPetalsEnabled] = useState(true);
   const [showSheet, setShowSheet] = useState(false);
   const [isCoverOpened, setIsCoverOpened] = useState(false);
+  const [showGallery, setShowGallery] = useState(false);
 
   // Auto-set target wedding date: 18 October 2026, 1:00 PM (13:00)
   const weddingDate = '2026-10-18T13:00:00';
@@ -262,6 +264,29 @@ export default function App() {
           <RSVPForm />
         </section>
 
+        {/* WEDDING GALLERY BUTTON SECTION */}
+        <section className="w-full text-center flex flex-col items-center">
+          <div className="mb-6">
+            <span className="text-[10px] tracking-[0.25em] font-sans uppercase font-bold text-gold-600">
+              Shared Memories
+            </span>
+            <h2 className="font-serif text-3xl sm:text-4xl text-emerald-950 font-bold tracking-wide mt-1">
+              Wedding Gallery
+            </h2>
+            <div className="w-12 h-[2px] bg-gold-400 mx-auto mt-3" />
+            <p className="text-sm font-serif italic text-emerald-900/60 mt-4 max-w-md mx-auto px-4">
+              Explore and share the beautiful moments captured by our family and friends.
+            </p>
+          </div>
+          <button
+            onClick={() => setShowGallery(true)}
+            className="flex items-center gap-2 px-8 py-4 bg-emerald-900 text-gold-50 rounded-full font-sans text-sm uppercase tracking-widest font-semibold shadow-lg hover:bg-emerald-950 transition-colors cursor-pointer group"
+          >
+            <Camera className="w-5 h-5 group-hover:scale-110 transition-transform" />
+            Open Gallery
+          </button>
+        </section>
+
         {/* BLESSINGS & DUAS GUESTBOOK WALL */}
         <section className="w-full">
           <GuestBlessings />
@@ -287,21 +312,32 @@ export default function App() {
         </p>
 
         <div className="mt-4 flex flex-col items-center gap-1">
-          <button
-            type="button"
-            onClick={() => setShowSheet(true)}
-            className="text-[10px] font-mono text-emerald-900/40 hover:text-gold-700 cursor-pointer transition-colors"
-            title="Organizer Guest Sheet View"
-          >
+          <p className="text-[10px] font-mono text-emerald-900/40">
             © 2026 Saima Fatima & Sohail Rawani Wedding
-          </button>
+          </p>
         </div>
+
+        {/* Hidden button to view the organizer sheet */}
+        <button
+          type="button"
+          onClick={() => setShowSheet(true)}
+          className="absolute bottom-2 left-2 w-12 h-12 opacity-0 cursor-default"
+          title="Secret Sheet Access"
+          aria-label="Organizer Sheet"
+        />
       </footer>
 
       {/* SEPARATE FRONT END SHEET VIEWER MODAL / ROUTE */}
       <AnimatePresence>
         {showSheet && (
           <DataSheetViewer onClose={closeSheetView} />
+        )}
+      </AnimatePresence>
+
+      {/* SEPARATE WEDDING GALLERY MODAL / ROUTE */}
+      <AnimatePresence>
+        {showGallery && (
+          <WeddingGallery onClose={() => setShowGallery(false)} />
         )}
       </AnimatePresence>
     </div>
