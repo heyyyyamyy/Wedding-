@@ -2,8 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Camera, Image as ImageIcon, Upload, X, Download, Loader2, Sparkles, ArrowLeft } from 'lucide-react';
 import { collection, addDoc, onSnapshot, query, orderBy } from 'firebase/firestore';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { db, storage } from '../lib/firebase';
+import { db } from '../lib/firebase';
 
 const EVENT_CATEGORIES = ['All', 'Nikah', 'Reception', 'Baraat Swagat', 'Candid Moments'];
 const UPLOAD_CATEGORIES = ['Nikah', 'Reception', 'Baraat Swagat', 'Candid Moments'];
@@ -46,47 +45,89 @@ export default function WeddingGallery({ onClose }: { onClose: () => void }) {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 15 * 1024 * 1024) {
-      alert("File is too large. Please select an image under 15MB.");
-      return;
-    }
-
     setIsUploading(true);
-    setUploadProgress(0);
+    setUploadProgress(10); // Indicate start
 
     try {
-      const storageRef = ref(storage, `gallery/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, '')}`);
-      const uploadTask = uploadBytesResumable(storageRef, file);
+      // Compress image client-side to fit within Firestore's 1MB limit
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target?.result as string;
+        img.onload = async () => {
+          setUploadProgress(40); // Image loaded in memory
+          
+          const canvas = document.createElement('canvas');
+          const MAX_WIDTH = 1200;
+          const MAX_HEIGHT = 1200;
+          let width = img.width;
+          let height = img.height;
 
-      uploadTask.on(
-        'state_changed',
-        (snapshot) => {
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          setUploadProgress(Math.round(progress));
-        },
-        (error) => {
-          console.error("Upload failed:", error);
-          alert("Failed to upload image. Storage permissions may not be configured.");
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+          
+          setUploadProgress(70); // Image compressed
+
+          // Output as jpeg, quality 0.6 (typically < 200kb)
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+          
+          if (dataUrl.length > 1000000) {
+             alert("Even after compression, the image is too large. Please select a smaller photo.");
+             setIsUploading(false);
+             return;
+          }
+
+          setUploadProgress(90); // Saving to database
+
+          try {
+            await addDoc(collection(db, 'gallery'), {
+              url: dataUrl,
+              eventCategory: selectedEvent,
+              uploadedBy: uploaderName || 'Guest',
+              createdAt: new Date().toISOString(),
+            });
+            
+            setUploadProgress(100);
+            setTimeout(() => {
+              setIsUploading(false);
+              setShowUploadModal(false);
+              setUploaderName('');
+              if (fileInputRef.current) fileInputRef.current.value = '';
+            }, 500);
+          } catch (dbError) {
+             console.error("Firestore save error:", dbError);
+             alert("Failed to save image to the gallery database.");
+             setIsUploading(false);
+          }
+        };
+        img.onerror = () => {
+          alert("Failed to process the image file.");
           setIsUploading(false);
-        },
-        async () => {
-          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-          await addDoc(collection(db, 'gallery'), {
-            url: downloadURL,
-            eventCategory: selectedEvent,
-            uploadedBy: uploaderName || 'Guest',
-            createdAt: new Date().toISOString(),
-          });
-          setIsUploading(false);
-          setShowUploadModal(false);
-          setUploaderName('');
-          if (fileInputRef.current) fileInputRef.current.value = '';
-        }
-      );
+        };
+      };
+      reader.onerror = () => {
+         alert("Failed to read the image file.");
+         setIsUploading(false);
+      };
+
     } catch (error) {
       console.error(error);
       setIsUploading(false);
-      alert("An error occurred during upload.");
+      alert("An error occurred during upload processing.");
     }
   };
 
