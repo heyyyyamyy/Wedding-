@@ -29,11 +29,11 @@ declare global {
   }
 }
 
-const YOUTUBE_VIDEO_ID = '1LVpuWpRs3I';
-const YOUTUBE_VIDEO_URL = 'https://www.youtube.com/watch?v=1LVpuWpRs3I';
-const SONG_TITLE = 'Din Shagna Da';
-const ARTIST_NAME = 'Jasleen Royal • Phillauri (Wedding Theme)';
-const START_SECONDS = 24; // Starts from 0:24 timestamp
+const YOUTUBE_VIDEO_ID = '8mYeTuzBQr4';
+const YOUTUBE_VIDEO_URL = 'https://youtu.be/8mYeTuzBQr4?si=iCHLafBKf__5lBNX';
+const SONG_TITLE = 'Aaj Sajeya';
+const ARTIST_NAME = 'Goldie Sohel (Wedding Theme)';
+const START_SECONDS = 33; // Starts from 0:33 timestamp
 
 export default function AudioPlayer() {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -129,7 +129,7 @@ export default function AudioPlayer() {
               } else if (event.data === 2) {
                 setIsPlaying(false);
               } else if (event.data === 0) {
-                // Loop continuously starting from "Din Shagna Da"
+                // Loop continuously starting from "Aaj Sajeya"
                 event.target.seekTo(START_SECONDS, true);
                 event.target.playVideo();
                 setIsPlaying(true);
@@ -173,7 +173,7 @@ export default function AudioPlayer() {
 
   // BROWSER AUTOPLAY POLICY UNLOCKER:
   // Browsers block audio until the first user gesture (touch, click, scroll).
-  // This listener immediately begins/unmutes "Din Shagna Da" on the very first interaction anywhere.
+  // This listener immediately begins/unmutes "Aaj Sajeya" on the very first interaction anywhere.
   useEffect(() => {
     const handleUserGesture = () => {
       if (hasTriggeredPlay.current) return;
@@ -212,7 +212,7 @@ export default function AudioPlayer() {
     }
   };
 
-  const restartFromDinShagnaDa = () => {
+  const restartSong = () => {
     playSong(true);
   };
 
@@ -271,7 +271,7 @@ export default function AudioPlayer() {
             title="Click to play wedding music"
           >
             <Sparkles className="w-3.5 h-3.5 text-emerald-950 fill-emerald-950 animate-spin" />
-            <span>Tap to Play <strong>Din Shagna Da</strong></span>
+            <span>Tap to Play <strong>Aaj Sajeya</strong></span>
           </motion.button>
         )}
 
@@ -288,7 +288,7 @@ export default function AudioPlayer() {
                 ? 'bg-emerald-950 border-gold-400 text-gold-200 shadow-gold-500/20 shadow-xl'
                 : 'bg-white/95 backdrop-blur-md border-gold-300 hover:border-gold-500 text-emerald-950 hover:bg-gold-50/50'
             }`}
-            title={isPlaying ? 'Pause Din Shagna Da' : 'Play Din Shagna Da (Always-Playing Wedding Song)'}
+            title={isPlaying ? 'Pause Aaj Sajeya' : 'Play Aaj Sajeya (Always-Playing Wedding Song)'}
           >
             {/* Live Equalizer Animation when playing */}
             {isPlaying ? (
@@ -304,7 +304,7 @@ export default function AudioPlayer() {
 
             <div className="flex flex-col text-left">
               <span className="text-[11px] font-serif font-bold tracking-wide leading-tight flex items-center gap-1">
-                {isPlaying ? 'Playing: Din Shagna Da' : 'Din Shagna Da'}
+                {isPlaying ? 'Playing: Aaj Sajeya' : 'Aaj Sajeya'}
               </span>
               <span className="text-[9px] font-sans uppercase tracking-widest text-gold-500 font-semibold hidden sm:block">
                 {isPlaying ? 'Continuous Background Music' : 'Wedding Song'}
@@ -397,25 +397,25 @@ export default function AudioPlayer() {
                   </button>
 
                   <button
-                    onClick={restartFromDinShagnaDa}
+                    onClick={restartSong}
                     className="p-1.5 text-xs text-gold-700 hover:text-gold-900 rounded-lg hover:bg-gold-100/60 transition-colors flex items-center gap-1 cursor-pointer"
-                    title="Restart from beginning (0:24)"
+                    title="Restart from beginning (0:33)"
                   >
                     <RotateCcw className="w-3 h-3" />
-                    <span className="text-[10px] font-sans">0:24</span>
+                    <span className="text-[10px] font-sans">0:33</span>
                   </button>
                 </div>
               </div>
             </div>
 
-            {/* Quick Action: Restart explicitly from 0:24 timestamp */}
+            {/* Quick Action: Restart explicitly from 0:33 timestamp */}
             <div className="mb-3">
               <button
-                onClick={restartFromDinShagnaDa}
+                onClick={restartSong}
                 className="w-full py-2 px-3 rounded-xl bg-gold-100/70 hover:bg-gold-200/70 text-emerald-950 border border-gold-300 text-xs font-serif font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-2xs"
               >
                 <RotateCcw className="w-3.5 h-3.5 text-gold-700" />
-                <span>Restart from 0:24</span>
+                <span>Restart from 0:33</span>
               </button>
             </div>
 
@@ -424,7 +424,7 @@ export default function AudioPlayer() {
               <div className="mb-3 rounded-xl overflow-hidden border border-gold-200 aspect-video bg-black shadow-inner">
                 <iframe
                   src={`https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}?autoplay=1&enablejsapi=1&start=${START_SECONDS}`}
-                  title="Din Shagna Da - Jasleen Royal"
+                  title="Aaj Sajeya - Goldie Sohel"
                   className="w-full h-full border-0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen

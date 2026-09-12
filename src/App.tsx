@@ -27,23 +27,26 @@ export default function App() {
   // Auto-set target wedding date: 18 October 2026, 1:00 PM (13:00)
   const weddingDate = '2026-10-18T13:00:00';
 
-  // Ensure website opens directly on the wedding card without opening any sheets or modals
+  // Ensure website ALWAYS opens strictly on the wedding card without opening any sheets or modals
   useEffect(() => {
-    // If the browser loaded with #sheet in the URL, remove the hash so it never auto-opens
-    if (window.location.hash === '#sheet') {
-      try {
-        history.replaceState(null, '', window.location.pathname + window.location.search);
-      } catch {}
-    }
+    setShowSheet(false);
+    try {
+      if (
+        window.location.hash === '#sheet' ||
+        window.location.search.includes('sheet') ||
+        window.location.search.includes('view=sheet')
+      ) {
+        const url = new URL(window.location.href);
+        url.searchParams.delete('sheet');
+        url.searchParams.delete('view');
+        url.hash = '';
+        history.replaceState(null, '', url.pathname);
+      }
+    } catch {}
   }, []);
 
   const closeSheetView = () => {
     setShowSheet(false);
-    if (window.location.hash === '#sheet') {
-      try {
-        history.replaceState(null, '', window.location.pathname);
-      } catch {}
-    }
   };
 
   const copyInvitationLink = () => {
@@ -278,9 +281,14 @@ export default function App() {
         </p>
 
         <div className="mt-4 flex flex-col items-center gap-1">
-          <p className="text-xs font-sans font-semibold text-emerald-900/70 tracking-widest uppercase">
+          <button
+            type="button"
+            onClick={() => setShowSheet(true)}
+            className="text-xs font-sans font-semibold text-emerald-900/70 tracking-widest uppercase hover:text-gold-700 cursor-pointer transition-colors"
+            title="Organizer Guest Sheet View"
+          >
             Startup solution
-          </p>
+          </button>
           <p className="text-[10px] font-mono text-emerald-900/40">
             © 2026 Saima Fatima & Sohail Rawani Wedding
           </p>
