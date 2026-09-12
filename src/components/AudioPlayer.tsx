@@ -172,30 +172,31 @@ export default function AudioPlayer() {
   }, [volume]);
 
   // BROWSER AUTOPLAY POLICY UNLOCKER:
-  // Browsers block audio until the first user gesture (touch, click, scroll).
+  // Browsers block audio until the first user gesture (touch, click).
   // This listener immediately begins/unmutes "Aaj Sajeya" on the very first interaction anywhere.
   useEffect(() => {
     const handleUserGesture = () => {
-      if (hasTriggeredPlay.current) return;
-      hasTriggeredPlay.current = true;
-
+      // If already playing, remove listeners to save resources
+      if (isPlaying) {
+        window.removeEventListener('click', handleUserGesture);
+        window.removeEventListener('touchstart', handleUserGesture);
+        return;
+      }
+      
       if (playerRef.current) {
         playSong(false);
       }
     };
 
-    window.addEventListener('click', handleUserGesture, { passive: true });
-    window.addEventListener('touchstart', handleUserGesture, { passive: true });
-    window.addEventListener('pointerdown', handleUserGesture, { passive: true });
-    window.addEventListener('scroll', handleUserGesture, { passive: true });
+    // Use direct interactions ONLY. Browsers explicitly block 'scroll' from unlocking audio.
+    window.addEventListener('click', handleUserGesture);
+    window.addEventListener('touchstart', handleUserGesture);
 
     return () => {
       window.removeEventListener('click', handleUserGesture);
       window.removeEventListener('touchstart', handleUserGesture);
-      window.removeEventListener('pointerdown', handleUserGesture);
-      window.removeEventListener('scroll', handleUserGesture);
     };
-  }, [playSong]);
+  }, [playSong, isPlaying]);
 
   const togglePlay = () => {
     if (!playerRef.current) return;
