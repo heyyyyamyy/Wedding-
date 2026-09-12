@@ -27,6 +27,20 @@
         "createdAt": { "type": "string", "description": "ISO timestamp of submission" }
       },
       "required": ["sender", "message", "likes", "createdAt"]
+    },
+    "GalleryPhoto": {
+      "title": "GalleryPhoto",
+      "description": "Guest uploaded wedding photo memory",
+      "type": "object",
+      "properties": {
+        "url": { "type": "string", "description": "Optimized image base64 data URI or image URL" },
+        "eventCategory": { "type": "string", "description": "Wedding event category (Nikah, Reception, etc.)" },
+        "uploadedBy": { "type": "string", "description": "Name of guest who uploaded" },
+        "caption": { "type": "string", "description": "Optional caption or memory description" },
+        "likes": { "type": "number", "description": "Number of social likes/hearts" },
+        "createdAt": { "type": "string", "description": "ISO timestamp of photo upload" }
+      },
+      "required": ["url", "eventCategory", "uploadedBy", "createdAt"]
     }
   },
   "firestore": {
@@ -37,6 +51,10 @@
     "/blessings/{blessingId}": {
       "schema": "Blessing",
       "description": "Collection of guest blessings and Duas"
+    },
+    "/gallery/{photoId}": {
+      "schema": "GalleryPhoto",
+      "description": "Collection of wedding memories and guest photo feed"
     }
   }
 }

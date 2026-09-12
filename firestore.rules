@@ -52,7 +52,10 @@ service cloud.firestore {
       allow create: if request.resource.data.url is string
                     && request.resource.data.eventCategory is string
                     && request.resource.data.uploadedBy is string;
-      allow update, delete: if false;
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes'])
+                    && request.resource.data.likes is number
+                    && request.resource.data.likes >= 0;
+      allow delete: if true;
     }
   }
 }
